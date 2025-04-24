@@ -14,17 +14,17 @@ pwd_context = CryptContext(schemes=["bcrypt"])
 class UserDAO:  
 
     @classmethod
-    async def user_authorization(cls,user_login, user_password):
+    async def user_authorization(cls, user_login, user_password):
         async with ClientSession() as session:
-
             headers = {"Authorization": config.API_TOKEN}
+            data = {"login": user_login, "password": user_password}
 
-            data = {"login": user_login,"password": user_password }
-
-            async with session.post(config.AUTHORIZATION, headers = headers, json= data) as response:
+            # Запрос на авторизацию
+            async with session.post(config.AUTHORIZATION, headers=headers, json=data) as response:
                 result = json.loads(await response.text())
                 if response.status != 200:
                     raise HTTPException(status_code=response.status, detail=result["message_errors"])
+
                 return result
             
     @classmethod
@@ -75,10 +75,10 @@ class Utils:
         match user_data["role"].lower():
             case "administrator":
                 user_data["user_info"] = None
-            case "representative":
-                user_data["role"] = UserRole.representative
+            case "Seller":
+                user_data["role"] = UserRole.Seller
                 user_data["user_info"] = await UserDAO.get_info_representative(user_data)
-            case "buyer":
-                user_data["role"] = UserRole.buyer
+            case "Shop":
+                user_data["role"] = UserRole.Shop
                 user_data["user_info"] = await UserDAO.get_info_sales_point(user_data)
 

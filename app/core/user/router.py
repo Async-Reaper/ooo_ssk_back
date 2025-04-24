@@ -23,7 +23,6 @@ async def read_cookies(request: Request, response: Response):
     user_data = await JwtManager.decode_access_token(cookies)
 
     await Utils.rights_check(user_data)
-
     return user_data
 
 @router_user.delete("/user/logout",
@@ -36,15 +35,20 @@ async def delete_cookie(response: Response):
 async def user_authorization(response: Response, request:Request, user_data: User = Body(..., description="Данные пользователя для авторизации")):
     
     existing_user = await UserDAO.user_authorization(user_login=str(user_data.login), 
-                                                         user_password=str(user_data.password))
+                                                        user_password=str(user_data.password))
     
     access_token = JwtManager.create_access_token(
-        {"userGUID": str(existing_user["userGUID"]),
-        "role": str(existing_user["role"])}
-        )
+        {
+            "userGUID": str(existing_user["userGUID"]),
+            "role": str(existing_user["role"]),
+            "user_info": str(existing_user["role"])
+        }
+    )
     
+    matrix = list[str](existing_user["matrix"])
+
     response.set_cookie("access_token", access_token)
     response.headers["Authorization"] = access_token
 
-    return {"JWT": access_token}
+    return {"JWT": access_token, "matrix": matrix}
     

@@ -44,7 +44,7 @@ class NomenclatureGet(BaseModel):
     products: list[NomenclatureOutput] = Field(..., description="Список товаров")
 
 class NomenclatureListInput(BaseModel):
-    nomenclatures: list = Field([GUID], description="Список ноенклатур")
+    nomenclatures: list = Field([GUID], description="Список номенклатур")
 
 class NomenclatureListOutput(BaseModel):
     guid: str = Field(GUID, description="Гуид товара")

@@ -15,13 +15,13 @@ from app.core.picture.router import router_picture
 from app.core.favorite.router import favorite_router
 from app.core.user_matrix.router import router_representative_data
 
-app = FastAPI(title="briola api",
+app = FastAPI(title="SSK API",
               description="🐇",
               version="1.2.0")
 
 
 origins = [
-    "http://localhost",
+    "http://localhost:5173"
     # "http://бриола42.рф",
     # "http://xn--42-6kcd9asuo.xn--p1ai",
     # "http://uslada.nvadm.ru",
@@ -32,8 +32,8 @@ app.mount("/static", StaticFiles(directory="templates"))
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,
+    allow_origins=origins,
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -90,7 +90,12 @@ async def get_nomenclatures(nomencltureData: NomenclatureListInput):
     result.reverse()
     return result
 
+@nomenclature_router.post("/nomenclature/get_nomenclatures_matrix", response_model=list[NomenclatureListOutput])
+async def get_nomenclatures(nomencltureData: NomenclatureListInput):
+    result = await NomenclatureDAO.get_nomenclatures_matrix(nomencltureData.nomenclatures)
+    result.reverse()
+    return result
     
     
     
-    
+# is_matrix: bool | None = Query(None, description="Признак того что товар матричный")
