@@ -5,8 +5,8 @@ from ..nomenclature.schemas import NomenclatureOutput
 class OrderHead(BaseModel):
     documentGUID: str = Field(GUID, description="GUID документа", min_length=36, max_length=36)
     number: str = Field("ОС000000000", description="Номер документа")
-    date: str = Field(DATE_TWO, description="Дата создания документа")
-    dateShipment: str = Field(DATE_TWO, description="[!..Уточник..!]")
+    date: str = Field(..., description="Дата создания документа", min_length=64, max_length=64)
+    dateShipment: str = Field(..., description="[!..Уточник..!]", min_length=64, max_length=64)
     contractName: str = Field(..., description="Название договора")
     contractGUID: str = Field(GUID, description="GUID договора", min_length=36, max_length=36)
     approved: bool = Field(..., description="Статус утверждения документа")
