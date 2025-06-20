@@ -54,6 +54,6 @@ app.include_router(router_picture)
 app.include_router(router_representative_data)
 
 if __name__ == "__main__":
-    uvicorn.run("core:app", log_level="info", reload=True, host="localhost", port=8000)
+    uvicorn.run("core:app", log_level="info", reload=True, host="127.0.0.1", port=8000)
  
 

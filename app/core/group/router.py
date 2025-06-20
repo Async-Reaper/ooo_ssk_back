@@ -29,8 +29,6 @@ async def get_group_by_structures():
     result = await GroupDAO.group_get()
     fine_groupe = []
     for element in result:
-        if element.parent_guid != "00000000-0000-0000-0000-000000000000":
-            continue
         objects = {
             "object": element,
             "subject": await get_element_by_guid(result, element.guid)

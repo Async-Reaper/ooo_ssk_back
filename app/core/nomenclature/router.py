@@ -38,11 +38,29 @@ async def get_product_by_options(request: Request,
                                 contract_guid: str | None = Query(None, description="GUID договора", min_length=36, max_length=36),
                                 nomenclature_group: str | None = Query(None, description="GUID группы номенклатуры", min_length=36, max_length=36),
                                 is_new: bool | None = Query(None, description="Признак того что товар должен быть новым"),
-                                is_discount: bool | None = Query(None, description="Признак того что товар должен быть по скидке")):
+                                is_discount: bool | None = Query(None, description="Признак того что товар должен быть по скидке"),
+                                matrix: list[str] | None = Query(None, description="Массив гуидов товаров по матрице")):
 
     query_params = await nomenclature_data_distribution_manager(request.query_params.items())
 
-    if not "title_products" in query_params:
+
+    if matrix:
+    
+        if not "title_products" in query_params:
+            products = await NomenclatureDAO.get_nomenclatures_matrix(matrix, pages = pages-1, 
+                                                                                limit = limit)
+                                                                                
+        else:
+            if query_params["title_products"] == "":
+                products = await NomenclatureDAO.get_nomenclatures_matrix(matrix, pages = pages-1, 
+                                                                                limit = limit)
+            else:
+                products = await NomenclatureDAO.get_nomenclatures_matrix__with__title(matrix, pages = pages-1, 
+                                                                            limit = limit, 
+                                                                            title=title_products)
+
+
+    elif not "title_products" in query_params:
         products = await NomenclatureDAO.get_product_by_options_without_title(pages = pages-1, 
                                                                               limit = limit, 
                                                                               **query_params["result"])
@@ -74,15 +92,22 @@ async def get_product_by_options(request: Request,
     if "contract_guid" in query_params and len(products) != 0:
         for product in products:
             product.additional_information = await UtilsDAO.get_more_info_product(product.guid, query_params["contract_guid"])
+            print(product.additional_information)
 
     await add_objects_with_pictures(products)
     total_count_products = await NomenclatureDAO.get_count_products()
-    
-    return {
-        "total_count_products": total_count_products,
-        "count_products": len(result_serch),
-        "products": products
-    }
+    try: 
+        return {
+            "total_count_products": total_count_products,
+            "count_products": len(result_serch),
+            "products": products
+        }
+    except:
+        return {
+            "total_count_products": total_count_products,
+            "count_products": len(products),
+            "products": products
+        }
 
 @nomenclature_router.post("/nomenclature/get_nomenclatures", response_model=list[NomenclatureListOutput])
 async def get_nomenclatures(nomencltureData: NomenclatureListInput):

@@ -2,7 +2,7 @@ from app.database   import async_session_maker
 from .models        import Contract
 from sqlalchemy     import select, insert, delete, update, join
 from fastapi        import HTTPException, status
-from ..favorite.models import Favorites
+from ..favorite.models import FavoritesSeller
 from ..nomenclature.models import Nomenclature
 from ..picture.models import Picture
 
@@ -54,17 +54,18 @@ class ContractDAO:
             try:
                 query = select(
                     Contract.__table__.c.counterparty_name,
-                    Favorites.__table__.c.user_guid,
-                    Favorites.__table__.c.product_guid,
+                    Contract.__table__.c.guid,
+                    FavoritesSeller.__table__.c.user_guid,
+                    FavoritesSeller.__table__.c.user_name,
+                    FavoritesSeller.__table__.c.product_guid,
                     Nomenclature.__table__,
-                    Picture.__table__.c.path
-                ).select_from(
+                ).filter_by(representative_guid = representativeGuid).select_from(
                     # join(Contract.__table__, Favorites.__table__, Contract.__table__.c.counterparty_guid == Favorites.__table__.c.user_guid)
-                    Contract.__table__.join(Favorites.__table__, Contract.__table__.c.counterparty_guid ==Favorites.__table__.c.user_guid)\
-                        .join(Nomenclature.__table__, Nomenclature.__table__.c.guid == Favorites.__table__.c.product_guid)\
-                        .join(Picture.__table__, Picture.__table__.c.guid_object == Favorites.__table__.c.product_guid)\
+                    Contract.__table__.join(FavoritesSeller.__table__, Contract.__table__.c.counterparty_guid ==FavoritesSeller.__table__.c.user_guid)\
+                        .join(Nomenclature.__table__, Nomenclature.__table__.c.guid == FavoritesSeller.__table__.c.product_guid)\
                         ,Nomenclature
                 )
+                # query = select(Contract).filter_by(representative_guid = representativeGuid)
 
                 result = await session.execute(query)
                 return result.fetchall()

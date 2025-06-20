@@ -52,6 +52,7 @@ class NomenclatureDAO:
                     query = select(Nomenclature).filter_by(is_deleted = False, **kwargs).limit(limit).offset(offset)
 
                 result = await session.execute(query)
+            
                 return result.scalars().all()
             except Exception as e:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.args))
@@ -93,44 +94,51 @@ class NomenclatureDAO:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.args))
             
     @classmethod
-    async def get_nomenclatures_matrix(cls, list_nomenclatures: list[str]) -> list[dict]:
-        """
-        Метод для поиска товаров в базе данных по списку GUID.
-
-        :param list_nomenclatures: Список GUID для поиска.
-        :return: Список найденных товаров.
-        """
+    async def get_nomenclatures_matrix(cls, list_nomenclatures: list[str], pages: int, limit: int) -> list:
+        print(list_nomenclatures)
+        
         if not list_nomenclatures:
-            # Если список пуст, возвращаем пустой результат
-            return []
+            return [] 
 
         async with async_session_maker() as session:
             try:
-                # Формируем запрос с фильтрацией по GUID и is_deleted=False
-                query = (
-                    select(Nomenclature)
-                    .filter(Nomenclature.guid.in_(list_nomenclatures))
-                    .filter_by(is_deleted=False)
-                )
-
-                # Выполняем запрос
+                offset = pages * limit 
+                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter_by(is_deleted = False).limit(limit).offset(offset)
+                
                 result = await session.execute(query)
 
-                # Преобразуем результат в список словарей (если нужно вернуть JSON-совместимый формат)
-                nomenclatures = [
-                    {**nomenclature.__dict__, "_sa_instance_state": None}
-                    for nomenclature in result.scalars().all()
-                ]
-
-                return nomenclatures
+                return result.scalars().all()  # Возвращаем найденные записи
 
             except Exception as e:
                 # Логируем ошибку и возвращаем HTTP-ошибку
                 raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
+                    status_code=400,
                     detail=f"Ошибка при выполнении запроса: {str(e)}"
                 )
+            
+    @classmethod
+    async def get_nomenclatures_matrix__with__title(cls, list_nomenclatures: list[str], pages: int, limit: int, title: str) -> list:
+        print(list_nomenclatures)
         
+        if not list_nomenclatures:
+            return [] 
+
+        async with async_session_maker() as session:
+            try:
+                offset = pages * limit 
+                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter(Nomenclature.full_name.ilike(f"%{title}%")).filter_by(is_deleted = False).limit(limit).offset(offset)
+                
+                result = await session.execute(query)
+
+                return result.scalars().all()  # Возвращаем найденные записи
+
+            except Exception as e:
+                # Логируем ошибку и возвращаем HTTP-ошибку
+                raise HTTPException(
+                    status_code=400,
+                    detail=f"Ошибка при выполнении запроса: {str(e)}"
+                )
+            
 
 class UtilsDAO: 
     @classmethod
@@ -154,10 +162,13 @@ class UtilsDAO:
                 "Authorization": config.API_TOKEN
             }
             data = {
-            "productItems": productID,
-            "contractGUID": contractID 
+            "matrix": [productID],
+            "idContract": contractID 
             }
-            async with session.post(f'{config.URL_1C}/nomenclatures/currentData', headers = headers, json= data) as response:
+            # async with session.post(f'{config.URL_1C}/hs/api/nomenclatures/currentData', headers = headers, json= data) as response:
+            #     result = json.loads(await response.text())
+            #     return result
+            async with session.post(f'{config.URL_1C}/hs/api/update', headers = headers, json= data) as response:
                 result = json.loads(await response.text())
-                return result
+                return result["arrayOfPrices"][0]
     

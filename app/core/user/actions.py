@@ -21,7 +21,9 @@ class UserDAO:
 
             # Запрос на авторизацию
             async with session.post(config.AUTHORIZATION, headers=headers, json=data) as response:
+            # async with session.post("http://192.168.0.10/TradeWork/hs/api/authorization", headers=headers, json=data) as response:
                 result = json.loads(await response.text())
+                # print(result)
                 if response.status != 200:
                     raise HTTPException(status_code=response.status, detail=result["message_errors"])
 
@@ -75,10 +77,10 @@ class Utils:
         match user_data["role"].lower():
             case "administrator":
                 user_data["user_info"] = None
-            case "Seller":
+            case "seller":
                 user_data["role"] = UserRole.Seller
                 user_data["user_info"] = await UserDAO.get_info_representative(user_data)
-            case "Shop":
+            case "shop":
                 user_data["role"] = UserRole.Shop
                 user_data["user_info"] = await UserDAO.get_info_sales_point(user_data)
 

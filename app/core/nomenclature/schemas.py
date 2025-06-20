@@ -35,7 +35,6 @@ class NomenclatureOutput(BaseModel):
     date_create: str = Field(DATE_TWO, description="Дата создания товара")
     brand_guid: str = Field(GUID, description="Уникальный идентификатор бренда")
     additional_information: dict | None = Field(None, description="Дополнительная информация продукта")
-    # additional_information: dict
     pictures: None | list[PictureOutput] = Field([], description="Изображения товара")
 
 class NomenclatureGet(BaseModel):

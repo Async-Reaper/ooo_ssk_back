@@ -3,6 +3,7 @@ from config import GUID, PHONE
 
 class FavoriteInput(BaseModel):
     user_guid: str = Field(GUID, description="GUID пользователя")
+    user_name: str = Field(GUID, description="Имя пользователя добавившего товар в избранное")
     product_guid: str = Field(GUID, description="GUID товара")
     currentTradePoint: str = Field(GUID, description="GUID договора")
 

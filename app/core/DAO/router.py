@@ -32,8 +32,8 @@ async def get_history_product(productGuid: str = Path(..., description="GUID т�
     return await Dao.get_history_product(productGuid=productGuid, contractGuid=contractGuid)
 
 @dao_router.get("/get_history_product/{startDate}/{endDate}/{contractGuid}")
-async def get_history_product(startDate: str = Path(..., description="Стартовая дата поиска. Формат — [00010101]", max_length=16),
-                              endDate: str = Path(..., description="Конечная дата поиска. Формат — [00010101]", max_length=16),
+async def get_history_product(startDate: str = Path(..., description="Стартовая дата поиска. Формат — [01.01.2005 20:01:03]", max_length=64),
+                              endDate: str = Path(..., description="Конечная дата поиска. Формат — [01.01.2025 20:01:03]", max_length=64),
                               contractGuid: str = Path(..., description="GUID договора", min_length=36, max_length=36)):
     return await Dao.get_history_by_date(startDate=startDate, endDate=endDate, contractGuid=contractGuid)
 

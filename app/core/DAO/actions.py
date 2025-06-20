@@ -13,7 +13,7 @@ class Dao:
                 "Authorization": config.API_TOKEN
             }
 
-            async with session.get(f"{config.URL_1C}/docs/orders/{orderGuid}", 
+            async with session.get(f"{config.URL_1C}/hs/api/docs/orders/{orderGuid}", 
                                     headers = headers) as response:
                 result = json.loads(await response.text())
                 return result
@@ -25,7 +25,7 @@ class Dao:
                 "Authorization": config.API_TOKEN
             }
 
-            async with session.get(f"{config.URL_1C}/buyer/{contractGuid}/debts", 
+            async with session.get(f"{config.URL_1C}/hs/api/buyer/{contractGuid}/debts", 
                                     headers = headers) as response:
                 result = json.loads(await response.text())
                 return result
@@ -37,7 +37,7 @@ class Dao:
                 "Authorization": config.API_TOKEN
             }
 
-            async with session.get(f"{config.URL_1C}/docs/orders/{orderGuid}/declaredItems", 
+            async with session.get(f"{config.URL_1C}/hs/api/docs/orders/{orderGuid}/declaredItems", 
                                     headers = headers) as response:
                 result = json.loads(await response.text())
                 return result
@@ -52,7 +52,7 @@ class Dao:
             "productItems": productGuid,
             "contractGUID": contractGuid 
             }
-            async with session.post(f"{config.URL_1C}/nomenclatures/history", 
+            async with session.post(f"{config.URL_1C}/hs/api/nomenclatures/history", 
                                     headers = headers, json= data) as response:
                 result = json.loads(await response.text())
                 if response.status != 404:
@@ -71,7 +71,7 @@ class Dao:
             "endDate": endDate,
             "contractGUID": contractGuid
             }
-            async with session.post(f"{config.URL_1C}/docs/orders/history", 
+            async with session.post(f"{config.URL_1C}/hs/api/docs/orders/history", 
                                     headers = headers, json= data) as response:
                 result = json.loads(await response.text())
                 return result
@@ -83,7 +83,7 @@ class Dao:
                 "Authorization": config.API_TOKEN
             }
 
-            async with session.post(f"{config.URL_1C}/docs/orders/build", 
+            async with session.post(f"{config.URL_1C}/hs/api/docs/orders/build", 
                                     headers = headers, 
                                     json=dict(kwargs)) as response:
                 result = json.loads(await response.text())
@@ -99,7 +99,7 @@ class Dao:
                 "Authorization": config.API_TOKEN
             }
 
-            async with session.post(f"{config.URL_1C}/docs/orders/approve", 
+            async with session.post(f"{config.URL_1C}/hs/api/docs/orders/approve", 
                                     headers = headers, 
                                     json=dict(kwargs)) as response:
                 result = json.loads(await response.text())
