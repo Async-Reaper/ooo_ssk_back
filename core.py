@@ -17,11 +17,12 @@ from app.core.user_matrix.router import router_representative_data
 
 app = FastAPI(title="SSK API",
               description="🐇",
-              version="1.2.0")
+              version="1.2.0",
+             )
 
 
 origins = [
-    "http://localhost:5173"
+    "https://xn--42-1lc1aa.xn--p1ai"
     # "http://бриола42.рф",
     # "http://xn--42-6kcd9asuo.xn--p1ai",
     # "http://uslada.nvadm.ru",
