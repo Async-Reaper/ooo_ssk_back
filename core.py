@@ -22,14 +22,15 @@ app = FastAPI(title="SSK API",
 
 
 origins = [
-    "https://xn--42-1lc1aa.xn--p1ai"
+    "https://xn--42-1lc1aa.xn--p1ai",
+    "http://localhost:5173"
     # "http://бриола42.рф",
     # "http://xn--42-6kcd9asuo.xn--p1ai",
     # "http://uslada.nvadm.ru",
     # "http://158.46.50.214",
 ]
 
-app.mount("/static", StaticFiles(directory="templates"))
+app.mount("/static", StaticFiles(directory="templates"), name="static")
 
 app.add_middleware(
     CORSMiddleware,
@@ -55,6 +56,6 @@ app.include_router(router_picture)
 app.include_router(router_representative_data)
 
 if __name__ == "__main__":
-    uvicorn.run("core:app", log_level="info", reload=True, host="127.0.0.1", port=8000)
+    uvicorn.run("core:app", log_level="info", reload=True, host="localhost", port=8000)
  
 

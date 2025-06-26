@@ -5,6 +5,7 @@ from fastapi        import HTTPException, status
 from aiohttp                import ClientSession
 from config import PATH_IMAGE
 from base64 import b64decode
+from pathlib import Path
 import os
 import json
 
@@ -61,9 +62,10 @@ class PictureManager:
     async def image_decoding_and_recording(cls, picture_data: dict) -> None:
         file_path = f"{PATH_IMAGE}{picture_data.picture_category.value}/{picture_data.guid_object}"
         try:
-            if not os.path.isdir(file_path):
-                os.mkdir(file_path)
+            Path(file_path).mkdir(parents=True, exist_ok=True)
+
             decoded_image = b64decode(picture_data.binary_image)
+            
             with open(f"{file_path}/{picture_data.file_name}.{picture_data.picture_type.value}", "wb") as file:
                 file.write(decoded_image)
         except Exception as e:

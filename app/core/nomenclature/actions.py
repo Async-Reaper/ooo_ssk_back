@@ -83,10 +83,10 @@ class NomenclatureDAO:
             
 
     @classmethod
-    async def get_nomenclatures(cls, listNomenclatures: NomenclatureListInput) -> list:
+    async def get_nomenclatures(cls, listNomenclatures: NomenclatureListInput, **kwargs) -> list:
         async with async_session_maker() as session:
             try:
-                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(listNomenclatures)).filter_by(is_deleted = False)
+                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(listNomenclatures)).filter_by(is_deleted = False, **kwargs)
 
                 result = await session.execute(query)
                 return result.scalars().all()
@@ -94,16 +94,19 @@ class NomenclatureDAO:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e.args))
             
     @classmethod
-    async def get_nomenclatures_matrix(cls, list_nomenclatures: list[str], pages: int, limit: int) -> list:
-        print(list_nomenclatures)
-        
+    async def get_nomenclatures_matrix(cls, list_nomenclatures: list[str], pages: int, limit: int, **kwargs) -> list:
+        if isinstance(list_nomenclatures, str):
+            list_nomenclatures = [list_nomenclatures]
+        elif not isinstance(list_nomenclatures, list):
+            list_nomenclatures = []
+
         if not list_nomenclatures:
-            return [] 
+            return []
 
         async with async_session_maker() as session:
             try:
                 offset = pages * limit 
-                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter_by(is_deleted = False).limit(limit).offset(offset)
+                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter_by(is_deleted = False, **kwargs).limit(limit).offset(offset)
                 
                 result = await session.execute(query)
 
@@ -117,16 +120,19 @@ class NomenclatureDAO:
                 )
             
     @classmethod
-    async def get_nomenclatures_matrix__with__title(cls, list_nomenclatures: list[str], pages: int, limit: int, title: str) -> list:
-        print(list_nomenclatures)
-        
+    async def get_nomenclatures_matrix__with__title(cls, list_nomenclatures: list[str], pages: int, limit: int, title: str, **kwargs) -> list:
+        if isinstance(list_nomenclatures, str):
+            list_nomenclatures = [list_nomenclatures]
+        elif not isinstance(list_nomenclatures, list):
+            list_nomenclatures = []
+
         if not list_nomenclatures:
-            return [] 
+            return []
 
         async with async_session_maker() as session:
             try:
                 offset = pages * limit 
-                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter(Nomenclature.full_name.ilike(f"%{title}%")).filter_by(is_deleted = False).limit(limit).offset(offset)
+                query = select(Nomenclature).filter(Nomenclature.__table__.c.guid.in_(list_nomenclatures)).filter_by(is_deleted = False, **kwargs).filter(Nomenclature.full_name.ilike(f"%{title}%")).limit(limit).offset(offset)
                 
                 result = await session.execute(query)
 

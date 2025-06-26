@@ -18,6 +18,7 @@ class NomenclatureInput(BaseModel):
     is_new: bool = Field(False, description="Новый товара(да/нет)")
     date_create: str = Field(DATE_TWO, description="Дата создания товара")
     brand_guid: str = Field(GUID, description="Уникальный идентификатор бренда")
+    matrix: list[str] = Field(..., description="Массив гуидов матричных товаров")
 
 class NomenclatureOutput(BaseModel):
     guid: str = Field(GUID, descriptio="Уникальный идентификатор товара")

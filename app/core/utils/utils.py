@@ -13,26 +13,38 @@ async def convert_str_to_type(values: dict) -> None:
         except:
             continue
 
-async def nomenclature_data_distribution_manager(nomenclature_data: dict) -> dict:
+async def nomenclature_data_distribution_manager(nomenclature_data: list) -> dict:
+    # print(nomenclature_data)
     result = {}
     return_data = {}
-    for element in nomenclature_data:
-        if element[1].lower() == "true":
-            result.update({element[0]: True})
-            continue
-        elif element[0].lower() == "contract_guid":
-            return_data.update({"contract_guid": element[1]})
-            continue 
-        elif element[1].lower() == "false":
-            result.update({element[0]: False})
-            continue
-        elif element[0].lower() == "title_products":
-            return_data.update({"title_products": element[1].lower()})
-            continue
-        result.update({element[0]: element[1]})
 
-    return_data.update({"result": result})
+    for key, value in nomenclature_data:
+        key_lower = key.lower()
 
+        if key_lower == "title_products":
+            return_data["title_products"] = value
+            continue
+        elif key_lower == "contract_guid":
+            return_data["contract_guid"] = value
+            continue
+
+        # Преобразование true/false
+        if value.lower() == "true":
+            processed_value = True
+        elif value.lower() == "false":
+            processed_value = False
+        else:
+            processed_value = value
+
+        # Обработка matrix как списка
+        if key == "matrix":
+            if key not in result:
+                result[key] = []
+            result[key].append(processed_value)
+        else:
+            result[key] = processed_value
+
+    return_data["result"] = result
     return return_data
 
 async def grouping_picture_data(nomenclature_data: Picture) -> dict:

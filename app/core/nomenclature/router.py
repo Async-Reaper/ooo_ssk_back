@@ -42,22 +42,29 @@ async def get_product_by_options(request: Request,
                                 matrix: list[str] | None = Query(None, description="Массив гуидов товаров по матрице")):
 
     query_params = await nomenclature_data_distribution_manager(request.query_params.items())
-
+    query_params["result"].pop("matrix", None)
+    print(matrix)
 
     if matrix:
     
         if not "title_products" in query_params:
-            products = await NomenclatureDAO.get_nomenclatures_matrix(matrix, pages = pages-1, 
-                                                                                limit = limit)
+            products = await NomenclatureDAO.get_nomenclatures_matrix(list_nomenclatures=matrix,
+                                                                        pages = pages-1, 
+                                                                        limit = limit,
+                                                                        **query_params["result"])
                                                                                 
         else:
             if query_params["title_products"] == "":
-                products = await NomenclatureDAO.get_nomenclatures_matrix(matrix, pages = pages-1, 
-                                                                                limit = limit)
+                products = await NomenclatureDAO.get_nomenclatures_matrix(list_nomenclatures=matrix,
+                                                                            pages = pages-1, 
+                                                                            limit = limit,
+                                                                            **query_params["result"])
             else:
-                products = await NomenclatureDAO.get_nomenclatures_matrix__with__title(matrix, pages = pages-1, 
+                products = await NomenclatureDAO.get_nomenclatures_matrix__with__title(list_nomenclatures=matrix,
+                                                                            pages = pages-1, 
                                                                             limit = limit, 
-                                                                            title=title_products)
+                                                                            title=title_products,
+                                                                            **query_params["result"])
 
 
     elif not "title_products" in query_params:
