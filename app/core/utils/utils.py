@@ -14,7 +14,6 @@ async def convert_str_to_type(values: dict) -> None:
             continue
 
 async def nomenclature_data_distribution_manager(nomenclature_data: list) -> dict:
-    # print(nomenclature_data)
     result = {}
     return_data = {}
 
@@ -46,6 +45,28 @@ async def nomenclature_data_distribution_manager(nomenclature_data: list) -> dic
 
     return_data["result"] = result
     return return_data
+
+# async def nomenclature_data_distribution_manager(nomenclature_data: dict) -> dict:
+#     result = {}
+#     return_data = {}
+#     for element in nomenclature_data:
+#         if element[1].lower() == "true":
+#             result.update({element[0]: True})
+#             continue
+#         elif element[0].lower() == "contract_guid":
+#             return_data.update({"contract_guid": element[1]})
+#             continue 
+#         elif element[1].lower() == "false":
+#             result.update({element[0]: False})
+#             continue
+#         elif element[0].lower() == "title_products":
+#             return_data.update({"title_products": element[1].lower()})
+#             continue
+#         result.update({element[0]: element[1]})
+
+#     return_data.update({"result": result})
+
+#     return return_data
 
 async def grouping_picture_data(nomenclature_data: Picture) -> dict:
     file_path = f"{PATH_IMAGE}{nomenclature_data.picture_category.value}/{nomenclature_data.guid_object}"

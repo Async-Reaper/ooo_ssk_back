@@ -43,7 +43,6 @@ async def get_product_by_options(request: Request,
 
     query_params = await nomenclature_data_distribution_manager(request.query_params.items())
     query_params["result"].pop("matrix", None)
-    print(matrix)
 
     if matrix:
     
@@ -97,9 +96,10 @@ async def get_product_by_options(request: Request,
     
         
     if "contract_guid" in query_params and len(products) != 0:
+        
         for product in products:
+            print("add info", product.guid)
             product.additional_information = await UtilsDAO.get_more_info_product(product.guid, query_params["contract_guid"])
-            print(product.additional_information)
 
     await add_objects_with_pictures(products)
     total_count_products = await NomenclatureDAO.get_count_products()

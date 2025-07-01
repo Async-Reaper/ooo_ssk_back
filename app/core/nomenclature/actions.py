@@ -176,5 +176,6 @@ class UtilsDAO:
             #     return result
             async with session.post(f'{config.URL_1C}/hs/api/update', headers = headers, json= data) as response:
                 result = json.loads(await response.text())
+                # print("result", data)
                 return result["arrayOfPrices"][0]
     
